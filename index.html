@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#007aff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>مترجم زیرنویس</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="light-mode">
+    <div class="container">
+        <div class="header">
+            <h1>مترجم زیرنویس</h1>
+            <div class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </div>
+        </div>
+
+        <div class="api-section">
+            <div class="api-container">
+                <div class="api-input-container">
+                    <label for="apiKey">کلید API OpenRouter:</label>
+                    <input type="password" id="apiKey" placeholder="کلید API OpenRouter خود را وارد کنید">
+                    <div class="connection-status" id="connectionStatus"></div>
+                </div>
+            </div>
+            <div class="api-btn-container">
+                <button class="apple-button" id="connectApi">اتصال به API</button>
+            </div>
+            <div class="api-help">
+                <i class="fas fa-info-circle"></i>
+                <span>برای دریافت کلید API به سایت <a href="https://openrouter.ai/" target="_blank">OpenRouter.ai</a> مراجعه کنید و پس از ثبت‌نام، از بخش API Keys کلید خود را کپی کنید.</span>
+            </div>
+            
+            <div class="model-selection">
+                <label for="modelSelect">انتخاب مدل:</label>
+                <div class="model-search-container">
+                    <input type="text" id="modelSearch" placeholder="جستجوی مدل..." class="model-search" autocomplete="off">
+                    <select id="modelSelect" class="apple-select">
+                        <option value="">در حال بارگذاری...</option>
+                    </select>
+                </div>
+                <button class="apple-button" id="confirmModel">تأیید مدل</button>
+            </div>
+            
+            <div class="tone-selection">
+                <label for="toneSelect">لحن ترجمه:</label>
+                <select id="toneSelect" class="apple-select">
+                    <option value="normal">عادی</option>
+                    <option value="formal">رسمی</option>
+                    <option value="informal">غیر رسمی</option>
+                    <option value="professional">حرفه‌ای</option>
+                    <option value="scientific">علمی</option>
+                    <option value="informative">اطلاعاتی</option>
+                    <option value="conversational">گفتاری</option>
+                    <option value="movie">حرفه‌ای مخصوص فیلم و سریال</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="upload-section">
+            <label for="srtFile" class="file-upload-label">
+                <i class="fas fa-upload"></i>
+                انتخاب فایل زیرنویس SRT
+            </label>
+            <input type="file" id="srtFile" accept=".srt" class="file-upload">
+            <span id="fileName">فایلی انتخاب نشده</span>
+        </div>
+
+        <div class="subtitle-containers">
+            <div class="subtitle-box">
+                <div class="subtitle-counter" id="originalCounter">تعداد خطوط: ۰</div>
+                <div class="subtitle-container">
+                    <h3>متن اصلی</h3>
+                    <div class="subtitle-content" id="originalSubtitles"></div>
+                </div>
+            </div>
+            <div class="subtitle-box">
+                <div class="subtitle-counter" id="translatedCounter">تعداد خطوط: ۰</div>
+                <div class="subtitle-container">
+                    <h3>ترجمه شده</h3>
+                    <div class="subtitle-content" id="translatedSubtitles"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="progress-section">
+            <div class="progress-info">
+                <span id="progressPercentage">۰٪</span>
+                <span id="remainingTime">زمان باقیمانده: در حال محاسبه...</span>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="apple-button" id="translateBtn">
+                <i class="fas fa-language"></i>
+                <span class="button-text">شروع ترجمه</span>
+            </button>
+            <button class="apple-button" id="pauseBtn" disabled>
+                <i class="fas fa-pause"></i>
+                <span class="button-text">توقف</span>
+            </button>
+            <button class="apple-button" id="resumeBtn" disabled>
+                <i class="fas fa-play"></i>
+                <span class="button-text">ادامه</span>
+            </button>
+            <button class="apple-button danger-button" id="clearBtn" disabled>
+                <i class="fas fa-trash"></i>
+                <span class="button-text">پاک کردن ترجمه</span>
+            </button>
+            <button class="apple-button warning-button" id="resetFileBtn">
+                <i class="fas fa-file-circle-xmark"></i>
+                <span class="button-text">پاک کردن فایل</span>
+            </button>
+            <button class="apple-button success-button" id="saveBtn" disabled>
+                <i class="fas fa-download"></i>
+                <span class="button-text">ذخیره زیرنویس</span>
+            </button>
+        </div>
+
+        <div class="developer-info">
+            <p>توسعه داده شده توسط: احسان شمسی</p>
+        </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+    
+    <script src="script.js"></script>
+</body>
+</html> 
