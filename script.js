@@ -870,10 +870,126 @@ document.addEventListener('DOMContentLoaded', function() {
 // ثبت سرویس ورکر
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/sw.js').then(function(registration) {
-      console.log('ServiceWorker registration successful with scope: ', registration.scope);
-    }, function(err) {
-      console.log('ServiceWorker registration failed: ', err);
-    });
+    navigator.serviceWorker.register('./sw.js')
+      .then(function(registration) {
+        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+      })
+      .catch(function(err) {
+        console.log('ServiceWorker registration failed: ', err);
+      });
   });
-} 
+}
+
+// متغیر برای کنترل نصب
+let deferredPrompt;
+let installButton;
+
+// ایجاد دکمه نصب
+function createInstallButton() {
+  const header = document.querySelector('.header');
+  if (!header) return;
+  
+  // افزودن دکمه نصب در کنار تغییر تم
+  installButton = document.createElement('div');
+  installButton.className = 'install-button';
+  installButton.innerHTML = '<i class="fas fa-download"></i>';
+  installButton.title = 'نصب برنامه';
+  installButton.style.display = 'none';
+  
+  // اضافه کردن به هدر
+  header.appendChild(installButton);
+  
+  // رویداد کلیک
+  installButton.addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+    
+    // نمایش پیام نصب
+    deferredPrompt.prompt();
+    
+    // انتظار برای انتخاب کاربر
+    const { outcome } = await deferredPrompt.userChoice;
+    console.log(`User response to the install prompt: ${outcome}`);
+    
+    // پاک کردن پرامپت
+    deferredPrompt = null;
+    
+    // مخفی کردن دکمه
+    installButton.style.display = 'none';
+  });
+}
+
+// نمایش دکمه نصب
+window.addEventListener('beforeinstallprompt', (e) => {
+  // جلوگیری از نمایش خودکار پرامپت
+  e.preventDefault();
+  // ذخیره رویداد برای استفاده بعدی
+  deferredPrompt = e;
+  
+  // نمایش دکمه نصب اختصاصی
+  if (installButton) {
+    installButton.style.display = 'flex';
+  }
+});
+
+// پس از نصب
+window.addEventListener('appinstalled', () => {
+  // مخفی کردن دکمه نصب
+  if (installButton) {
+    installButton.style.display = 'none';
+  }
+  console.log('برنامه با موفقیت نصب شد');
+  deferredPrompt = null;
+});
+
+// ایجاد دکمه نصب پس از بارگذاری صفحه
+window.addEventListener('DOMContentLoaded', () => {
+  createInstallButton();
+});
+
+// افزودن استایل دکمه نصب به صفحه
+document.addEventListener('DOMContentLoaded', () => {
+  const style = document.createElement('style');
+  style.textContent = `
+    .install-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      margin-right: 10px;
+      background-color: #007aff;
+      color: white;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .header .right-buttons {
+      display: flex;
+      align-items: center;
+    }
+  `;
+  document.head.appendChild(style);
+  
+  // بازسازی هدر برای نمایش بهتر دکمه‌ها
+  const header = document.querySelector('.header');
+  if (header) {
+    const rightButtons = document.createElement('div');
+    rightButtons.className = 'right-buttons';
+    
+    // اضافه کردن دکمه‌های موجود به قسمت راست
+    const themeToggle = header.querySelector('.theme-toggle');
+    if (themeToggle) {
+      header.removeChild(themeToggle);
+      rightButtons.appendChild(themeToggle);
+    }
+    
+    header.appendChild(rightButtons);
+  }
+}); 

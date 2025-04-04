@@ -2,20 +2,32 @@
   "name": "مترجم زیرنویس",
   "short_name": "مترجم",
   "description": "برنامه مترجم زیرنویس",
-  "start_url": "index.html",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#4285f4",
+  "theme_color": "#007aff",
+  "orientation": "any",
+  "categories": ["utilities", "productivity", "entertainment"],
+  "shortcuts": [
+    {
+      "name": "باز کردن مترجم",
+      "url": "./",
+      "icons": [{ "src": "./icon-192x192.png", "sizes": "192x192" }]
+    }
+  ],
   "icons": [
     {
-      "src": "icon-192x192.png",
+      "src": "./icon-192x192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "icon-512x512.png",
+      "src": "./icon-512x512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 } 
