@@ -23,81 +23,155 @@
     <div class="container">
         <div class="header">
             <h1>مترجم زیرنویس</h1>
-            <div class="theme-toggle" id="themeToggle">
-                <i class="fas fa-moon"></i>
+            <div class="header-controls">
+                <button class="settings-toggle-btn" id="settingsToggleBtn">
+                    <i class="fas fa-cog"></i>
+                    <span>تنظیمات</span>
+                </button>
+                <div class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </div>
             </div>
         </div>
 
-        <div class="api-section">
-            <div class="api-container">
-                <div class="api-input-container">
-                    <label for="apiKey">کلید API OpenRouter:</label>
-                    <input type="password" id="apiKey" placeholder="کلید API OpenRouter خود را وارد کنید">
-                    <div class="connection-status" id="connectionStatus"></div>
+        <!-- Settings Modal -->
+        <div class="settings-modal" id="settingsModal">
+            <div class="settings-modal-content">
+                <div class="settings-modal-header">
+                    <h2><i class="fas fa-cog"></i> تنظیمات برنامه</h2>
+                    <button class="settings-close-btn" id="settingsCloseBtn">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
-            </div>
-            <div class="api-btn-container">
-                <button class="apple-button" id="connectApi">اتصال به API</button>
-            </div>
-            <div class="api-help">
-                <i class="fas fa-info-circle"></i>
-                <span>برای دریافت کلید API به سایت <a href="https://openrouter.ai/" target="_blank">OpenRouter.ai</a> مراجعه کنید و پس از ثبت‌نام، از بخش API Keys کلید خود را کپی کنید.</span>
-            </div>
-            
-            <div class="model-selection">
-                <label for="modelSelect">انتخاب مدل:</label>
-                <div class="model-search-container">
-                    <input type="text" id="modelSearch" placeholder="جستجوی مدل..." class="model-search" autocomplete="off">
-                    <select id="modelSelect" class="apple-select">
-                        <option value="">در حال بارگذاری...</option>
-                    </select>
+                
+                <div class="settings-modal-body">
+                    <div class="settings-section">
+                        <h3><i class="fas fa-key"></i> اتصال API</h3>
+                        <div class="api-container">
+                            <div class="api-input-container">
+                                <label for="apiKey">کلید API OpenRouter:</label>
+                                <input type="password" id="apiKey" placeholder="کلید API OpenRouter خود را وارد کنید">
+                                <div class="connection-status" id="connectionStatus"></div>
+                            </div>
+                        </div>
+                        <div class="api-btn-container">
+                            <button class="apple-button" id="connectApi">
+                                <i class="fas fa-plug"></i>
+                                اتصال به API
+                            </button>
+                        </div>
+                        <div class="api-help">
+                            <i class="fas fa-info-circle"></i>
+                            <span>برای دریافت کلید API به سایت <a href="https://openrouter.ai/" target="_blank">OpenRouter.ai</a> مراجعه کنید و پس از ثبت‌نام، از بخش API Keys کلید خود را کپی کنید.</span>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3><i class="fas fa-robot"></i> انتخاب مدل هوش مصنوعی</h3>
+                        <div class="model-selection">
+                            <label for="modelSelect">انتخاب مدل:</label>
+                            <div class="model-search-container">
+                                <input type="text" id="modelSearch" placeholder="جستجوی مدل..." class="model-search" autocomplete="off">
+                                <select id="modelSelect" class="apple-select">
+                                    <option value="">در حال بارگذاری...</option>
+                                </select>
+                            </div>
+                            <button class="apple-button" id="confirmModel">
+                                <i class="fas fa-check"></i>
+                                تأیید مدل
+                            </button>
+                            <p class="model-guide"><i class="fas fa-lightbulb"></i>در تاریخ ماه می سال 2025 بهترین مدل برای ترجمه دقیق و عالی مدل هوش مصنوعی جمینی 2.5 فلش میباشد.</p>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3><i class="fas fa-language"></i> تنظیمات ترجمه</h3>
+                        <div class="settings-row">
+                            <div class="setting-item">
+                                <label for="toneSelect">لحن ترجمه:</label>
+                                <select id="toneSelect" class="apple-select">
+                                    <option value="normal">عادی</option>
+                                    <option value="formal">رسمی</option>
+                                    <option value="informal">غیر رسمی</option>
+                                    <option value="professional">حرفه‌ای</option>
+                                    <option value="scientific">علمی</option>
+                                    <option value="informative">اطلاعاتی</option>
+                                    <option value="conversational">گفتاری</option>
+                                    <option value="movie">حرفه‌ای مخصوص فیلم و سریال</option>
+                                    <option value="humorous">طنز</option>
+                                    <option value="poetic">شاعرانه</option>
+                                    <option value="dramatic">دراماتیک</option>
+                                    <option value="uncensored">بدون سانسور</option>
+                                </select>
+                            </div>
+                            <div class="setting-item">
+                                <label for="targetLanguageSelect">زبان خروجی:</label>
+                                <select id="targetLanguageSelect" class="apple-select">
+                                    <option value="fa" selected>فارسی</option>
+                                    <option value="en">English</option>
+                                    <option value="ar">العربية</option>
+                                    <option value="fr">Français</option>
+                                    <option value="de">Deutsch</option>
+                                    <option value="es">Español</option>
+                                    <option value="zh">中文</option>
+                                    <option value="ru">Русский</option>
+                                    <option value="ja">日本語</option>
+                                    <option value="ko">한국어</option>
+                                    <option value="it">Italiano</option>
+                                    <option value="pt">Português</option>
+                                    <option value="tr">Türkçe</option>
+                                    <option value="hi">हिन्दी</option>
+                                    <option value="bn">বাংলা</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <label for="creativityLevelSelect">میزان خلاقیت:</label>
+                            <div class="creativity-container">
+                                <input type="range" id="creativityLevelSelect" class="creativity-slider" min="0.0" max="2.0" step="0.1" value="0.5">
+                                <span class="creativity-value" id="creativityValue">0.5</span>
+                            </div>
+                            <div class="creativity-labels">
+                                <span>محافظه‌کار</span>
+                                <span>متعادل</span>
+                                <span>خلاق</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3><i class="fas fa-tools"></i> مدیریت تنظیمات</h3>
+                        <div class="settings-actions">
+                            <div class="settings-buttons">
+                                <button class="apple-button" id="exportSettingsBtn">
+                                    <i class="fas fa-download"></i>
+                                    <span class="button-text">صادرات تنظیمات</span>
+                                </button>
+                                <button class="apple-button" id="importSettingsBtn">
+                                    <i class="fas fa-upload"></i>
+                                    <span class="button-text">وارد کردن تنظیمات</span>
+                                </button>
+                                <input type="file" id="settingsFileInput" accept=".json" style="display: none;">
+                                <button class="apple-button warning-button" id="resetSettingsBtn">
+                                    <i class="fas fa-undo"></i>
+                                    <span class="button-text">بازنشانی تنظیمات</span>
+                                </button>
+                                <button class="apple-button danger-button" id="clearProjectBtn">
+                                    <i class="fas fa-trash-alt"></i>
+                                    <span class="button-text">پاک کردن پروژه ذخیره شده</span>
+                                </button>
+                            </div>
+                            <div class="settings-info">
+                                <i class="fas fa-info-circle"></i>
+                                <span>تنظیمات شما به صورت خودکار ذخیره می‌شوند</span>
+                            </div>
+                            <div class="project-status" id="projectStatus">
+                                <i class="fas fa-save"></i>
+                                <span id="projectStatusText">بررسی وضعیت پروژه...</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <button class="apple-button" id="confirmModel">تأیید مدل</button>
-                <p class="model-guide"><i class="fas fa-info-circle"></i>در تاریخ ماه می سال 2025 بهترین مدل برای ترجمه دقیق و عالی مدل هوش مصنوعی جمینی 2.5 فلش میباشد.</p>
-            </div>
-            
-            <div class="tone-selection">
-                <label for="toneSelect">لحن ترجمه:</label>
-                <select id="toneSelect" class="apple-select">
-                    <option value="normal">عادی</option>
-                    <option value="formal">رسمی</option>
-                    <option value="informal">غیر رسمی</option>
-                    <option value="professional">حرفه‌ای</option>
-                    <option value="scientific">علمی</option>
-                    <option value="informative">اطلاعاتی</option>
-                    <option value="conversational">گفتاری</option>
-                    <option value="movie">حرفه‌ای مخصوص فیلم و سریال</option>
-                    <option value="humorous">طنز</option>
-                    <option value="poetic">شاعرانه</option>
-                    <option value="dramatic">دراماتیک</option>
-                    <option value="uncensored">بدون سانسور</option>
-                </select>
-            </div>
-
-            <div class="language-selection">
-                <label for="targetLanguageSelect">زبان خروجی:</label>
-                <select id="targetLanguageSelect" class="apple-select">
-                    <option value="fa" selected>فارسی</option>
-                    <option value="en">English</option>
-                    <option value="ar">العربية</option>
-                    <option value="fr">Français</option>
-                    <option value="de">Deutsch</option>
-                    <option value="es">Español</option>
-                    <option value="zh">中文</option>
-                    <option value="ru">Русский</option>
-                    <option value="ja">日本語</option>
-                    <option value="ko">한국어</option>
-                    <option value="it">Italiano</option>
-                    <option value="pt">Português</option>
-                    <option value="tr">Türkçe</option>
-                    <option value="hi">हिन्दी</option>
-                    <option value="bn">বাংলা</option>
-                </select>
-            </div>
-
-            <div class="creativity-selection">
-                <label for="creativityLevelSelect">میزان خلاقیت:</label>
-                <input type="number" id="creativityLevelSelect" class="apple-input" min="0.0" max="2.0" step="0.1" value="0.5">
             </div>
         </div>
 
@@ -124,6 +198,85 @@
                     <h3>ترجمه شده</h3>
                     <div class="subtitle-content" id="translatedSubtitles"></div>
                 </div>
+            </div>
+        </div>
+
+        <div class="audio-dubbing-section">
+            <h3>دوبله صوتی</h3>
+            <div class="audio-info">
+                <i class="fas fa-info-circle"></i>
+                <span>برای هر خط زیرنویس ترجمه شده، می‌توانید یک فایل صوتی اضافه کنید. در پایان، تمام فایل‌های صوتی طبق زمان‌بندی زیرنویس‌ها ترکیب شده و به عنوان یک فایل دوبله قابل دانلود خواهند بود.</span>
+            </div>
+            <div class="audio-overflow-info">
+                <i class="fas fa-clock"></i>
+                <span><strong>مدیریت فایل‌های طولانی:</strong><br>
+                • <strong>تمدید زمان:</strong> زمان زیرنویس تا انتهای فایل صوتی تمدید می‌شود<br>
+                • <strong>برش فایل:</strong> فایل صوتی به اندازه زمان زیرنویس برش می‌خورد<br>
+                • <strong>تنظیم سرعت:</strong> سرعت پخش فایل صوتی تنظیم می‌شود تا در زمان زیرنویس جا شود</span>
+            </div>
+            
+            <div class="audio-settings">
+                <div class="audio-setting-item">
+                    <label for="audioVolumeSlider">حجم صدا:</label>
+                    <input type="range" id="audioVolumeSlider" min="0" max="100" value="80" class="audio-slider">
+                    <span id="audioVolumeValue">80%</span>
+                </div>
+                <div class="audio-setting-item">
+                    <label for="audioQualitySelect">کیفیت صوتی:</label>
+                    <select id="audioQualitySelect" class="apple-select">
+                        <option value="44100">استاندارد (44.1 kHz)</option>
+                        <option value="48000">بالا (48 kHz)</option>
+                        <option value="96000">خیلی بالا (96 kHz)</option>
+                    </select>
+                </div>
+                <div class="audio-setting-item">
+                    <label for="audioFadeSelect">Fade In/Out:</label>
+                    <select id="audioFadeSelect" class="apple-select">
+                        <option value="0.1">سریع (0.1s)</option>
+                        <option value="0.3" selected>متوسط (0.3s)</option>
+                        <option value="0.5">آهسته (0.5s)</option>
+                        <option value="0">بدون Fade</option>
+                    </select>
+                </div>
+                <div class="audio-setting-item">
+                    <label for="audioFormatSelect">فرمت خروجی:</label>
+                    <select id="audioFormatSelect" class="apple-select">
+                        <option value="wav">WAV (کیفیت بالا)</option>
+                        <option value="mp3" selected>MP3 (فشرده)</option>
+                    </select>
+                </div>
+                <div class="audio-setting-item">
+                    <label for="audioOverflowSelect">مدیریت فایل‌های طولانی:</label>
+                    <select id="audioOverflowSelect" class="apple-select">
+                        <option value="extend" selected>تمدید زمان زیرنویس</option>
+                        <option value="cut">برش فایل صوتی</option>
+                        <option value="speed">تنظیم سرعت پخش</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="audio-progress">
+                <div class="audio-progress-info">
+                    <span id="audioProgressPercentage">۰٪</span>
+                    <span id="audioStatus">وضعیت دوبله: آماده</span>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="audioProgressBar"></div>
+                </div>
+            </div>
+            <div class="audio-controls">
+                <button class="apple-button" id="mergeAudioBtn" disabled>
+                    <i class="fas fa-layer-group"></i>
+                    <span class="button-text">ترکیب فایل‌های صوتی</span>
+                </button>
+                <button class="apple-button success-button" id="downloadAudioBtn" disabled>
+                    <i class="fas fa-download"></i>
+                    <span class="button-text">دانلود فایل دوبله</span>
+                </button>
+                <button class="apple-button warning-button" id="clearAudioBtn">
+                    <i class="fas fa-trash-alt"></i>
+                    <span class="button-text">پاک کردن همه فایل‌های صوتی</span>
+                </button>
             </div>
         </div>
 
@@ -179,6 +332,69 @@
     </div>
 
     <div id="notification" class="notification"></div>
+    
+    <!-- مودال ویرایشگر فایل صوتی -->
+    <div id="audioEditorModal" class="audio-editor-modal">
+        <div class="audio-editor-content">
+            <div class="audio-editor-header">
+                <h3><i class="fas fa-cut"></i> ویرایشگر فایل صوتی</h3>
+                <button id="closeAudioEditorBtn"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="audio-editor-body">
+                <div class="audio-waveform-container">
+                    <div id="audioWaveform"></div>
+                    <div class="audio-timeline"></div>
+                </div>
+                
+                <div class="audio-editor-controls">
+                    <div class="audio-editor-info">
+                        <div id="audioStartTime">شروع: ۰۰:۰۰.۰۰۰</div>
+                        <div id="audioEndTime">پایان: ۰۰:۰۰.۰۰۰</div>
+                        <div id="audioDuration">مدت: ۰.۰۰ ثانیه</div>
+                    </div>
+                    
+                    <div class="audio-editor-tools">
+                        <div class="audio-editor-tool">
+                            <label for="audioTrimStart">برش از ابتدا:</label>
+                            <input type="range" id="audioTrimStart" min="0" max="100" value="0" class="audio-slider">
+                            <span id="audioTrimStartValue">۰.۰۰s</span>
+                        </div>
+                        <div class="audio-editor-tool">
+                            <label for="audioTrimEnd">برش از انتها:</label>
+                            <input type="range" id="audioTrimEnd" min="0" max="100" value="100" class="audio-slider">
+                            <span id="audioTrimEndValue">۰.۰۰s</span>
+                        </div>
+                        <div class="audio-editor-tool">
+                            <label for="audioPlaybackRate">سرعت پخش:</label>
+                            <input type="range" id="audioPlaybackRate" min="0.5" max="2" step="0.05" value="1" class="audio-slider">
+                            <span id="audioPlaybackRateValue">۱.۰۰x</span>
+                        </div>
+                    </div>
+                    
+                    <div class="audio-editor-actions">
+                        <button id="audioPlayPauseBtn" class="audio-editor-btn">
+                            <i class="fas fa-play"></i> پخش
+                        </button>
+                        <button id="audioResetBtn" class="audio-editor-btn warning">
+                            <i class="fas fa-undo"></i> بازنشانی
+                        </button>
+                        <button id="audioApplyBtn" class="audio-editor-btn success">
+                            <i class="fas fa-check"></i> اعمال تغییرات
+                        </button>
+                    </div>
+                    
+                    <div class="audio-subtitle-timing">
+                        <div>
+                            <strong>زمان زیرنویس:</strong> <span id="subtitleTimeDisplay">۰۰:۰۰.۰۰۰ --> ۰۰:۰۰.۰۰۰</span>
+                        </div>
+                        <div>
+                            <strong>مدت زیرنویس:</strong> <span id="subtitleDurationDisplay">۰.۰۰ ثانیه</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     
     <script src="script.js"></script>
 </body>

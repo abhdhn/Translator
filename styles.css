@@ -3,6 +3,7 @@
 :root {
     /* Updated Color Palette */
     --primary-color: #007bff; /* A slightly more vibrant blue */
+    --primary-color-rgb: 0, 123, 255; /* RGB format for primary color */
     --secondary-color: #6f42c1; /* A new accent color (purple) */
     --success-color: #28a745; /* Standard success green */
     --warning-color: #ffc107; /* Standard warning yellow */
@@ -81,6 +82,49 @@ body.dark-mode {
     margin-bottom: 30px;
     border-bottom: 1px solid var(--light-border);
     padding-bottom: 15px;
+}
+
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.settings-toggle-btn {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3);
+    font-size: 14px;
+}
+
+.settings-toggle-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 122, 255, 0.4);
+}
+
+.settings-toggle-btn:active {
+    transform: translateY(0);
+}
+
+.settings-toggle-btn i {
+    font-size: 16px;
+}
+
+.dark-mode .settings-toggle-btn {
+    box-shadow: 0 4px 15px rgba(111, 66, 193, 0.3);
+}
+
+.dark-mode .settings-toggle-btn:hover {
+    box-shadow: 0 6px 20px rgba(111, 66, 193, 0.4);
 }
 
 .dark-mode .header {
@@ -461,53 +505,99 @@ input:focus, select:focus {
     color: #aaa;
 }
 
-.subtitle-item .subtitle-text.editing {
+.subtitle-item .subtitle-text.editing,
+.subtitle-item .subtitle-time.editing {
     background-color: rgba(255, 204, 0, 0.1);
     border: 1px solid rgba(255, 204, 0, 0.5);
     padding: 5px;
 }
 
-.dark-mode .subtitle-item .subtitle-text.editing {
+.dark-mode .subtitle-item .subtitle-text.editing,
+.dark-mode .subtitle-item .subtitle-time.editing {
     background-color: rgba(255, 204, 0, 0.2);
     border-color: rgba(255, 204, 0, 0.4);
 }
 
+.time-edit-input {
+    width: 100%;
+    font-size: 12px;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: monospace;
+    color: inherit;
+    padding: 0;
+}
+
+.subtitle-item .subtitle-time {
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    padding: 3px 5px;
+    border-radius: 4px;
+}
+
+.subtitle-item .subtitle-time:hover {
+    background-color: rgba(0, 122, 255, 0.1);
+}
+
+.subtitle-item .subtitle-time:after {
+    content: '\f044';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: 10px;
+    opacity: 0;
+    margin-right: 5px;
+    transition: opacity 0.2s;
+}
+
+.subtitle-item .subtitle-time:hover:after {
+    opacity: 0.7;
+}
+
 .subtitle-actions {
     position: absolute;
-    top: 10px;
-    left: 10px;
+    top: 5px;
+    left: 5px;
     display: flex;
     gap: 5px;
     opacity: 0;
     transition: opacity 0.2s ease;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 3px;
+    border-radius: 5px;
+    z-index: 10;
+}
+
+.dark-mode .subtitle-actions {
+    background-color: rgba(50, 50, 50, 0.8);
 }
 
 .subtitle-item:hover .subtitle-actions {
     opacity: 1;
 }
 
-.edit-btn, .retranslate-btn {
-    width: 30px;
-    height: 30px;
+.action-btn {
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     border: none;
-    background: var(--primary-color);
     color: white;
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 12px;
+    font-size: 11px;
     transition: var(--transition);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.edit-btn:hover, .retranslate-btn:hover {
-    transform: translateY(-2px);
+.action-btn:hover {
+    transform: scale(1.1);
 }
 
-.edit-btn:active, .retranslate-btn:active {
-    transform: translateY(0);
+.action-btn:active {
+    transform: scale(1);
 }
 
 .edit-btn {
@@ -515,20 +605,48 @@ input:focus, select:focus {
 }
 
 .edit-btn:hover {
-    background-color: #e67e00;
+    background-color: #e68a00;
 }
 
 .retranslate-btn {
-    background-color: var(--secondary-color);
+    background-color: var(--info-color);
 }
 
 .retranslate-btn:hover {
-    background-color: #27a4e6;
+    background-color: #117a8b;
 }
 
-.retranslate-btn:disabled {
-    background-color: #a8c5d5;
-    cursor: wait;
+.time-edit-btn {
+    background-color: var(--secondary-color);
+}
+
+.time-edit-btn:hover {
+    background-color: #5a32a3;
+}
+
+.time-edit-btn.saving {
+    background-color: var(--success-color);
+}
+
+.time-edit-btn.saving:hover {
+    background-color: #218838;
+}
+
+.retranslate-btn:disabled,
+.edit-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.dark-mode .retranslate-btn:disabled,
+.dark-mode .edit-btn:disabled {
+    background-color: #555;
+}
+
+.subtitle-actions.original-actions {
+    background-color: transparent;
+    padding: 0;
 }
 
 /* Progress Section Styles */
@@ -852,9 +970,9 @@ input:focus, select:focus {
         margin-left: 5px;
     }
     
-    .edit-btn, .retranslate-btn {
-        width: 28px;
-        height: 28px;
+    .action-btn {
+        width: 26px;
+        height: 26px;
     }
 }
 
@@ -1000,4 +1118,1273 @@ input:focus, select:focus {
 
 .dark-mode .model-guide {
     color: #aaa;
+}
+
+.settings-actions {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid var(--light-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.settings-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.dark-mode .settings-actions {
+    border-color: var(--dark-border);
+}
+
+.settings-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #666;
+    background: rgba(0, 122, 255, 0.1);
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid rgba(0, 122, 255, 0.2);
+}
+
+.dark-mode .settings-info {
+    color: #aaa;
+    background: rgba(0, 122, 255, 0.15);
+    border-color: rgba(0, 122, 255, 0.3);
+}
+
+.settings-info i {
+    color: var(--primary-color);
+    font-size: 14px;
+}
+
+.project-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--success-color);
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: rgba(52, 199, 89, 0.1);
+    border-radius: 6px;
+    border: 1px solid rgba(52, 199, 89, 0.2);
+}
+
+.project-status.no-project {
+    color: #666;
+    background: rgba(142, 142, 147, 0.1);
+    border-color: rgba(142, 142, 147, 0.2);
+}
+
+.dark-mode .project-status {
+    background: rgba(52, 199, 89, 0.15);
+    border-color: rgba(52, 199, 89, 0.3);
+}
+
+.dark-mode .project-status.no-project {
+    color: #aaa;
+    background: rgba(142, 142, 147, 0.15);
+    border-color: rgba(142, 142, 147, 0.3);
+}
+
+/* Settings Modal Styles */
+.settings-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 9999;
+    overflow-y: auto;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.settings-modal.show {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+    padding-top: 5vh;
+    min-height: 100vh;
+    box-sizing: border-box;
+    opacity: 1;
+}
+
+.settings-modal-content {
+    background: var(--light-bg);
+    backdrop-filter: var(--glass-effect);
+    -webkit-backdrop-filter: var(--glass-effect);
+    border-radius: 15px;
+    width: 100%;
+    max-width: 800px;
+    max-height: 85vh;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--light-border);
+    position: relative;
+    margin: auto;
+    transform: translateY(20px) scale(0.95);
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    opacity: 0;
+}
+
+.settings-modal.show .settings-modal-content {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+}
+
+.dark-mode .settings-modal-content {
+    background: var(--dark-bg);
+    border-color: var(--dark-border);
+}
+
+.settings-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px;
+    border-bottom: 1px solid var(--light-border);
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.dark-mode .settings-modal-header {
+    border-color: var(--dark-border);
+    background: rgba(40, 40, 42, 0.8);
+}
+
+.settings-modal-header h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--primary-color);
+}
+
+.settings-close-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #666;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+
+.settings-close-btn:hover {
+    background: rgba(255, 0, 0, 0.1);
+    color: var(--danger-color);
+}
+
+.dark-mode .settings-close-btn {
+    color: #aaa;
+}
+
+.settings-modal-body {
+    padding: 25px;
+    max-height: calc(90vh - 80px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+.settings-section {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.dark-mode .settings-section {
+    background: rgba(60, 60, 67, 0.6);
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+.settings-section:last-child {
+    margin-bottom: 0;
+}
+
+.settings-section h3 {
+    margin: 0 0 20px 0;
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--primary-color);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding-bottom: 10px;
+}
+
+.dark-mode .settings-section h3 {
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.settings-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.setting-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.setting-item label {
+    font-weight: 500;
+    font-size: 14px;
+    color: #333;
+}
+
+.dark-mode .setting-item label {
+    color: #ddd;
+}
+
+.creativity-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.creativity-slider {
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: #ddd;
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.creativity-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.creativity-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .creativity-slider {
+    background: #555;
+}
+
+.creativity-value {
+    min-width: 40px;
+    font-weight: 600;
+    color: var(--primary-color);
+    background: rgba(0, 122, 255, 0.1);
+    padding: 4px 8px;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 12px;
+}
+
+.creativity-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #666;
+    margin-top: 5px;
+}
+
+.dark-mode .creativity-labels {
+    color: #aaa;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Audio Editor Modal Styles */
+.audio-editor-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    z-index: 9999;
+    overflow: auto;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.audio-editor-modal.show {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+}
+
+.audio-editor-content {
+    background: #fff;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 900px;
+    max-height: 90vh;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+}
+
+.audio-editor-modal.show .audio-editor-content {
+    transform: scale(1);
+}
+
+.dark-mode .audio-editor-content {
+    background: #1c1c1e;
+    color: #fff;
+}
+
+.audio-editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+    background: var(--primary-color);
+    color: white;
+}
+
+.audio-editor-header h3 {
+    margin: 0;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.audio-editor-header button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.audio-editor-header button:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.audio-editor-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-height: calc(90vh - 60px);
+    overflow-y: auto;
+}
+
+.audio-waveform-container {
+    width: 100%;
+    height: 120px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+.dark-mode .audio-waveform-container {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+#audioWaveform {
+    width: 100%;
+    height: 100px;
+    background: transparent;
+}
+
+.audio-timeline {
+    height: 20px;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.dark-mode .audio-timeline {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.audio-editor-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.audio-editor-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.dark-mode .audio-editor-info {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.audio-editor-tools {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: rgba(0, 0, 0, 0.03);
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.dark-mode .audio-editor-tools {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.audio-editor-tool {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.audio-editor-tool label {
+    min-width: 120px;
+    font-size: 13px;
+}
+
+.audio-editor-tool .audio-slider {
+    flex: 1;
+}
+
+.audio-editor-tool span {
+    min-width: 50px;
+    text-align: right;
+    font-size: 12px;
+    font-family: monospace;
+}
+
+.audio-editor-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.audio-editor-btn {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 6px;
+    background: var(--primary-color);
+    color: white;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.2s;
+}
+
+.audio-editor-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+.audio-editor-btn.warning {
+    background: var(--warning-color);
+}
+
+.audio-editor-btn.success {
+    background: var(--success-color);
+}
+
+.audio-subtitle-timing {
+    margin-top: 10px;
+    background: rgba(var(--primary-color-rgb), 0.1);
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.dark-mode .audio-subtitle-timing {
+    background: rgba(var(--primary-color-rgb), 0.2);
+}
+
+@media (max-width: 768px) {
+    .audio-editor-content {
+        width: 95%;
+        max-height: 95vh;
+    }
+    
+    .audio-editor-info {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .audio-editor-tool {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+    
+    .audio-editor-tool label {
+        min-width: 100%;
+    }
+    
+    .audio-waveform-container {
+        height: 100px;
+    }
+    
+    .audio-editor-actions {
+        flex-wrap: wrap;
+    }
+    
+    .audio-editor-btn {
+        flex: 1;
+        min-width: 100px;
+    }
+}
+
+
+/* Audio Dubbing Section Styles */
+.audio-dubbing-section {
+    margin-bottom: 30px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    transition: var(--transition);
+}
+
+.dark-mode .audio-dubbing-section {
+    background: rgba(40, 40, 42, 0.5);
+}
+
+.audio-dubbing-section h3 {
+    margin-bottom: 15px;
+    text-align: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--light-border);
+    cursor: pointer;
+    position: relative;
+}
+
+.dark-mode .audio-dubbing-section h3 {
+    border-color: var(--dark-border);
+}
+
+.audio-info {
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: #666;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.7);
+    padding: 10px 15px;
+    border-radius: 8px;
+}
+
+.dark-mode .audio-info {
+    color: #aaa;
+    background: rgba(60, 60, 67, 0.7);
+}
+
+.audio-info i {
+    color: var(--primary-color);
+    font-size: 16px;
+    margin-top: 2px;
+}
+
+.audio-overflow-info {
+    margin-bottom: 15px;
+    font-size: 12px;
+    color: #666;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: rgba(255, 149, 0, 0.1);
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 149, 0, 0.2);
+}
+
+.dark-mode .audio-overflow-info {
+    color: #aaa;
+    background: rgba(255, 149, 0, 0.15);
+    border-color: rgba(255, 149, 0, 0.3);
+}
+
+.audio-overflow-info i {
+    color: var(--warning-color);
+    font-size: 16px;
+    margin-top: 2px;
+}
+
+.audio-progress {
+    margin-bottom: 15px;
+}
+
+.audio-progress-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #555;
+}
+
+.dark-mode .audio-progress-info {
+    color: #aaa;
+}
+
+.audio-settings {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode .audio-settings {
+    background: rgba(60, 60, 67, 0.7);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.audio-setting-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.audio-setting-item:last-child {
+    margin-bottom: 0;
+}
+
+.audio-setting-item label {
+    min-width: 100px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.audio-slider {
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: #ddd;
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.audio-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.audio-slider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .audio-slider {
+    background: #555;
+}
+
+#audioVolumeValue {
+    min-width: 40px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--primary-color);
+}
+
+.audio-controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Audio Upload Button for Subtitle Items */
+.subtitle-audio-actions {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 6px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.dark-mode .subtitle-audio-actions {
+    background: rgba(255, 255, 255, 0.02);
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+.audio-upload-btn {
+    background: var(--info-color);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: var(--transition);
+    align-self: flex-start;
+}
+
+.audio-upload-btn:hover {
+    background: #138496;
+    transform: translateY(-1px);
+}
+
+.audio-upload-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.audio-status {
+    font-size: 11px;
+    color: #666;
+    flex: 1;
+}
+
+.dark-mode .audio-status {
+    color: #aaa;
+}
+
+.audio-file-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.audio-file-name {
+    font-weight: 500;
+    color: var(--success-color);
+    font-size: 12px;
+}
+
+.audio-file-details {
+    font-size: 10px;
+    color: #888;
+    font-family: monospace;
+}
+
+.dark-mode .audio-file-details {
+    color: #bbb;
+}
+
+.audio-time-warning {
+    font-size: 9px;
+    font-weight: 500;
+    margin-top: 2px;
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+
+.audio-time-warning.success {
+    color: var(--success-color);
+    background: rgba(52, 199, 89, 0.1);
+}
+
+.audio-time-warning.warning {
+    color: var(--warning-color);
+    background: rgba(255, 149, 0, 0.1);
+}
+
+.audio-time-warning.error {
+    color: var(--danger-color);
+    background: rgba(220, 53, 69, 0.1);
+}
+
+.audio-playback-rate {
+    font-size: 10px;
+    color: var(--info-color);
+    background: rgba(23, 162, 184, 0.1);
+    padding: 2px 4px;
+    border-radius: 3px;
+    display: inline-block;
+    margin-top: 3px;
+}
+
+.audio-preview-btn, .audio-edit-btn {
+    background: var(--secondary-color);
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: var(--transition);
+    align-self: flex-start;
+    margin-right: 4px;
+}
+
+.audio-preview-btn:hover, .audio-edit-btn:hover {
+    background: #5a32a3;
+    transform: translateY(-1px);
+}
+
+.audio-edit-btn {
+    background: var(--info-color);
+}
+
+.audio-edit-btn:hover {
+    background: #138496;
+}
+
+.audio-remove-btn {
+    background: var(--danger-color);
+    color: white;
+    border: none;
+    padding: 4px 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 10px;
+    transition: var(--transition);
+    align-self: flex-start;
+}
+
+.audio-remove-btn:hover {
+    background: #c82333;
+    transform: translateY(-1px);
+}
+
+.audio-controls-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.audio-preview {
+    margin-top: 5px;
+    font-size: 10px;
+    color: var(--info-color);
+}
+
+.has-audio {
+    border-left: 3px solid var(--success-color);
+    background: rgba(40, 167, 69, 0.05);
+}
+
+.dark-mode .has-audio {
+    background: rgba(40, 167, 69, 0.1);
+}
+
+@media (max-width: 768px) {
+    .audio-controls {
+        flex-wrap: wrap;
+    }
+    
+    .audio-controls .apple-button {
+        flex: 1;
+    }
+    
+    .audio-info {
+        font-size: 12px;
+    }
+
+    .settings-actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .settings-buttons {
+        justify-content: center;
+    }
+
+    .settings-buttons .apple-button {
+        flex: 1;
+        min-width: 120px;
+    }
+
+    .settings-info {
+        text-align: center;
+        align-self: center;
+    }
+
+    /* Settings Modal Responsive */
+    .settings-modal.show {
+        padding-top: 3vh;
+    }
+
+    .settings-modal-content {
+        max-width: 95%;
+        margin: 0 auto;
+        width: 95%;
+    }
+
+    .settings-modal-header {
+        padding: 15px 20px;
+    }
+
+    .settings-modal-header h2 {
+        font-size: 18px;
+    }
+
+    .settings-modal-body {
+        padding: 20px;
+    }
+
+    .settings-section {
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+
+    .settings-row {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .header-controls {
+        gap: 10px;
+    }
+
+    .settings-toggle-btn {
+        padding: 8px 15px;
+        font-size: 13px;
+    }
+
+    .settings-toggle-btn span {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .audio-dubbing-section {
+        padding: 15px;
+    }
+    
+    .audio-info {
+        padding: 8px 12px;
+        font-size: 11px;
+    }
+    
+    .subtitle-audio-actions {
+        flex-direction: column;
+    }
+
+    .settings-buttons {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .settings-buttons .apple-button {
+        width: 100%;
+        font-size: 12px;
+        padding: 8px 12px;
+    }
+
+    .settings-info {
+        font-size: 11px;
+        padding: 6px 10px;
+    }
+
+    /* Settings Modal Mobile */
+    .settings-modal {
+        padding: 5px;
+    }
+
+    .settings-modal.show {
+        padding-top: 2vh;
+        align-items: flex-start;
+    }
+
+    .settings-modal-content {
+        max-width: 100%;
+        max-height: 95vh;
+        border-radius: 10px;
+        margin: 0;
+        width: calc(100% - 10px);
+    }
+
+    .settings-modal-header {
+        padding: 12px 15px;
+    }
+
+    .settings-modal-header h2 {
+        font-size: 16px;
+    }
+
+    .settings-modal-body {
+        padding: 15px;
+    }
+
+    .settings-section {
+        padding: 12px;
+        margin-bottom: 15px;
+    }
+
+    .settings-section h3 {
+        font-size: 14px;
+        margin-bottom: 15px;
+    }
+
+    .header-controls {
+        gap: 8px;
+    }
+
+    .settings-toggle-btn {
+        padding: 6px 10px;
+        font-size: 12px;
+        border-radius: 20px;
+    }
+
+    .theme-toggle {
+        width: 32px;
+        height: 32px;
+    }
+}
+
+/* استایل‌های مربوط به ابزارهای تنظیم زمان */
+.timing-tools-container {
+    margin: 15px 0;
+    position: relative;
+}
+
+.timing-tools {
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.dark-mode .timing-tools {
+    background-color: #2a2a2a;
+    border-color: #444;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.timing-tools h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 16px;
+    color: #333;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 8px;
+}
+
+.dark-mode .timing-tools h3 {
+    color: #eee;
+    border-color: #444;
+}
+
+.timing-input-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.timing-input-group label {
+    margin-left: 10px;
+    font-size: 14px;
+    color: #555;
+}
+
+.dark-mode .timing-input-group label {
+    color: #bbb;
+}
+
+.timing-input-group input {
+    width: 80px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    color: #333;
+}
+
+.dark-mode .timing-input-group input {
+    background-color: #333;
+    color: #eee;
+    border-color: #555;
+}
+
+.timing-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.timing-btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    background-color: #2196F3;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background-color 0.2s;
+}
+
+.timing-btn:hover {
+    background-color: #0b7dda;
+}
+
+.timing-btn:active {
+    background-color: #0a69b7;
+}
+
+.timing-btn i {
+    font-size: 12px;
+}
+
+#shiftForwardBtn {
+    background-color: #4CAF50;
+}
+
+#shiftForwardBtn:hover {
+    background-color: #3e8e41;
+}
+
+#shiftBackwardBtn {
+    background-color: #f44336;
+}
+
+#shiftBackwardBtn:hover {
+    background-color: #d32f2f;
+}
+
+#syncToAudioBtn {
+    background-color: #ff9800;
+}
+
+#syncToAudioBtn:hover {
+    background-color: #e68a00;
+}
+
+.toggle-timing-tools {
+    background: linear-gradient(135deg, #2196F3, #3f51b5);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s;
+}
+
+.toggle-timing-tools:hover {
+    background: linear-gradient(135deg, #1976D2, #303f9f);
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+}
+
+.toggle-timing-tools i {
+    font-size: 14px;
+}
+
+@media (max-width: 768px) {
+    .timing-input-group {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .timing-buttons {
+        flex-direction: column;
+    }
+    
+    .timing-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Icon is added via JS with class 'section-toggle-icon fas fa-chevron-down' or 'fa-chevron-up' */
+/* Specific styles for the icon if needed beyond what JS sets inline */
+.section-toggle-icon {
+    /* font-size: 0.9em; /* Example: already set by JS */
+    /* margin-left: 10px; /* Example: already set by JS */
+    transition: transform 0.2s ease-in-out;
+}
+
+/* If h3 has the icon and is in open state (chevron-up) */
+.audio-dubbing-section h3 .fa-chevron-up {
+    /* transform: rotate(180deg); /* Example if you want to rotate the down-arrow */
+}
+
+
+/* Styles for the collapsible content wrapper */
+.audio-dubbing-collapsible-content {
+    /* This div is set to display: none or display: block by JS */
+    /* Add padding or margin if needed when it's visible */
+    /* Example: padding-top: 15px; */
+    /* transition: opacity 0.3s ease, max-height 0.3s ease; */ /* For smoother transitions if using CSS animations */
 }
