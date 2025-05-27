@@ -53,6 +53,7 @@
                     </select>
                 </div>
                 <button class="apple-button" id="confirmModel">تأیید مدل</button>
+                <p class="model-guide"><i class="fas fa-info-circle"></i>در تاریخ ماه می سال 2025 بهترین مدل برای ترجمه دقیق و عالی مدل هوش مصنوعی جمینی 2.5 فلش میباشد.</p>
             </div>
             
             <div class="tone-selection">
@@ -72,14 +73,40 @@
                     <option value="uncensored">بدون سانسور</option>
                 </select>
             </div>
+
+            <div class="language-selection">
+                <label for="targetLanguageSelect">زبان خروجی:</label>
+                <select id="targetLanguageSelect" class="apple-select">
+                    <option value="fa" selected>فارسی</option>
+                    <option value="en">English</option>
+                    <option value="ar">العربية</option>
+                    <option value="fr">Français</option>
+                    <option value="de">Deutsch</option>
+                    <option value="es">Español</option>
+                    <option value="zh">中文</option>
+                    <option value="ru">Русский</option>
+                    <option value="ja">日本語</option>
+                    <option value="ko">한국어</option>
+                    <option value="it">Italiano</option>
+                    <option value="pt">Português</option>
+                    <option value="tr">Türkçe</option>
+                    <option value="hi">हिन्दी</option>
+                    <option value="bn">বাংলা</option>
+                </select>
+            </div>
+
+            <div class="creativity-selection">
+                <label for="creativityLevelSelect">میزان خلاقیت:</label>
+                <input type="number" id="creativityLevelSelect" class="apple-input" min="0.0" max="2.0" step="0.1" value="0.5">
+            </div>
         </div>
 
         <div class="upload-section">
             <label for="srtFile" class="file-upload-label">
                 <i class="fas fa-upload"></i>
-                انتخاب فایل زیرنویس SRT
+                انتخاب فایل زیرنویس SRT/VTT
             </label>
-            <input type="file" id="srtFile" accept=".srt" class="file-upload">
+            <input type="file" id="srtFile" accept=".srt,.vtt" class="file-upload">
             <span id="fileName">فایلی انتخاب نشده</span>
         </div>
 
@@ -131,6 +158,15 @@
                 <i class="fas fa-file-circle-xmark"></i>
                 <span class="button-text">پاک کردن فایل</span>
             </button>
+            
+            <div class="output-format-selection">
+                <label for="outputFormatSelect">فرمت خروجی:</label>
+                <select id="outputFormatSelect" class="apple-select">
+                    <option value="srt" selected>SRT</option>
+                    <option value="vtt">VTT</option>
+                </select>
+            </div>
+
             <button class="apple-button success-button" id="saveBtn" disabled>
                 <i class="fas fa-download"></i>
                 <span class="button-text">ذخیره زیرنویس</span>

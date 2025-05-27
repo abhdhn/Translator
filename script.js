@@ -7,6 +7,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const modelSearch = document.getElementById('modelSearch');
     const confirmModelBtn = document.getElementById('confirmModel');
     const toneSelect = document.getElementById('toneSelect');
+    const targetLanguageSelect = document.getElementById('targetLanguageSelect');
+    const creativityLevelSelect = document.getElementById('creativityLevelSelect');
+    const outputFormatSelect = document.getElementById('outputFormatSelect');
     const srtFileInput = document.getElementById('srtFile');
     const fileNameDisplay = document.getElementById('fileName');
     const originalSubtitles = document.getElementById('originalSubtitles');
@@ -313,21 +316,23 @@ document.addEventListener('DOMContentLoaded', function() {
         const file = event.target.files[0];
         if (!file) return;
         
-        if (file.name.endsWith('.srt')) {
-            fileNameDisplay.textContent = file.name;
-            originalFileName = file.name.replace('.srt', '');
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const content = e.target.result;
+        fileNameDisplay.textContent = file.name;
+        originalFileName = file.name.substring(0, file.name.lastIndexOf('.')); // Get file name without extension
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const content = e.target.result;
+            if (file.name.endsWith('.srt')) {
                 parseSRT(content);
-            };
-            reader.readAsText(file);
-        } else {
-            showNotification('لطفاً یک فایل SRT انتخاب کنید');
-            srtFileInput.value = '';
-            fileNameDisplay.textContent = 'فایلی انتخاب نشده';
-        }
+            } else if (file.name.endsWith('.vtt')) {
+                parseVTT(content);
+            } else {
+                showNotification('لطفاً یک فایل زیرنویس معتبر (.srt یا .vtt) انتخاب کنید');
+                srtFileInput.value = '';
+                fileNameDisplay.textContent = 'فایلی انتخاب نشده';
+            }
+        };
+        reader.readAsText(file);
     }
 
     function parseSRT(content) {
@@ -365,6 +370,57 @@ document.addEventListener('DOMContentLoaded', function() {
         // بروزرسانی شمارشگر خطوط اصلی
         updateSubtitleCounters();
         
+        showNotification(`${srtContent.length} زیرنویس بارگذاری شد`);
+    }
+
+    function parseVTT(content) {
+        // Clear previous content
+        originalSubtitles.innerHTML = '';
+        translatedSubtitles.innerHTML = '';
+        translatedContent = [];
+        saveBtn.disabled = true;
+
+        // Remove WEBVTT header and any comments
+        const cleanedContent = content.replace(/WEBVTT\s*\n/, '').replace(/NOTE.*\n/g, '').trim();
+
+        // Split into cues
+        const cues = cleanedContent.split(/\n\s*\n/);
+        srtContent = cues.map((cue, index) => {
+            const lines = cue.trim().split('\n');
+            if (lines.length >= 2) {
+                // VTT cues can have an optional identifier on the first line
+                let timeCodeLineIndex = 0;
+                let cueId = null;
+                if (!lines[0].includes('-->')) { // If first line is not timecode, it's an ID
+                    cueId = lines[0];
+                    timeCodeLineIndex = 1;
+                }
+
+                const timeCode = lines[timeCodeLineIndex];
+                const text = lines.slice(timeCodeLineIndex + 1).join('\n');
+
+                // Convert VTT timecode (HH:MM:SS.mmm) to SRT timecode (HH:MM:SS,mmm)
+                const srtTimeCode = timeCode.replace(/\./g, ',');
+
+                return { index: index + 1, timeCode: srtTimeCode, text: text };
+            }
+            return null;
+        }).filter(entry => entry !== null);
+
+        // Display original subtitles
+        srtContent.forEach(entry => {
+            const subtitleItem = document.createElement('div');
+            subtitleItem.className = 'subtitle-item';
+            subtitleItem.innerHTML = `
+                <div class="subtitle-time">${entry.timeCode}</div>
+                <div class="subtitle-text">${entry.text}</div>
+            `;
+            originalSubtitles.appendChild(subtitleItem);
+        });
+
+        // بروزرسانی شمارشگر خطوط اصلی
+        updateSubtitleCounters();
+
         showNotification(`${srtContent.length} زیرنویس بارگذاری شد`);
     }
 
@@ -488,43 +544,45 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     async function translateText(text, tone) {
+        const targetLanguageCode = targetLanguageSelect.value;
+        const targetLanguageName = getLanguageName(targetLanguageCode);
         let prompt;
         switch (tone) {
             case 'formal':
-                prompt = `ترجمه زیرنویس زیر را به فارسی با لحن رسمی انجام بده. فقط متن ترجمه شده را برگردان: "${text}"`;
+                prompt = `ترجمه زیرنویس زیر را به ${targetLanguageName} با لحن رسمی انجام بده. فقط متن ترجمه شده را برگردان: "${text}"`;
                 break;
             case 'informal':
-                prompt = `ترجمه زیرنویس زیر را به فارسی با لحن غیر رسمی و محاوره‌ای انجام بده. فقط متن ترجمه شده را برگردان: "${text}"`;
+                prompt = `ترجمه زیرنویس زیر را به ${targetLanguageName} با لحن غیر رسمی و محاوره‌ای انجام بده. فقط متن ترجمه شده را برگردان: "${text}"`;
                 break;
             case 'professional':
-                prompt = `ترجمه زیرنویس زیر را به فارسی با لحن حرفه‌ای انجام بده. فقط متن ترجمه شده را برگردان: "${text}"`;
+                prompt = `ترجمه زیرنویس زیر را به ${targetLanguageName} با لحن حرفه‌ای انجام بده. فقط متن ترجمه شده را برگردان: "${text}"`;
                 break;
             case 'scientific':
-                prompt = `ترجمه زیرنویس زیر را به فارسی با لحن علمی و تخصصی انجام بده. فقط متن ترجمه شده را برگردان: "${text}"`;
+                prompt = `ترجمه زیرنویس زیر را به ${targetLanguageName} با لحن علمی و تخصصی انجام بده. فقط متن ترجمه شده را برگردان: "${text}"`;
                 break;
             case 'informative':
-                prompt = `ترجمه زیرنویس زیر را به فارسی با لحن اطلاعاتی انجام بده. فقط متن ترجمه شده را برگردان: "${text}"`;
+                prompt = `ترجمه زیرنویس زیر را به ${targetLanguageName} با لحن اطلاعاتی انجام بده. فقط متن ترجمه شده را برگردان: "${text}"`;
                 break;
             case 'conversational':
-                prompt = `ترجمه زیرنویس زیر را به فارسی با لحن گفتاری و روزمره انجام بده. فقط متن ترجمه شده را برگردان: "${text}"`;
+                prompt = `ترجمه زیرنویس زیر را به ${targetLanguageName} با لحن گفتاری و روزمره انجام بده. فقط متن ترجمه شده را برگردان: "${text}"`;
                 break;
             case 'movie':
-                prompt = `ترجمه زیرنویس زیر را به فارسی با لحن حرفه‌ای مخصوص فیلم و سریال انجام بده. فقط متن ترجمه شده را برگردان: "${text}"`;
+                prompt = `ترجمه زیرنویس زیر را به ${targetLanguageName} با لحن حرفه‌ای مخصوص فیلم و سریال انجام بده. فقط متن ترجمه شده را برگردان: "${text}"`;
                 break;
             case 'humorous':
-                prompt = `ترجمه زیرنویس زیر را به فارسی با لحن طنز و شوخ‌طبعانه انجام بده. فقط متن ترجمه شده را برگردان: "${text}"`;
+                prompt = `ترجمه زیرنویس زیر را به ${targetLanguageName} با لحن طنز و شوخ‌طبعانه انجام بده. فقط متن ترجمه شده را برگردان: "${text}"`;
                 break;
             case 'poetic':
-                prompt = `ترجمه زیرنویس زیر را به فارسی با لحن شاعرانه و ادبی انجام بده. فقط متن ترجمه شده را برگردان: "${text}"`;
+                prompt = `ترجمه زیرنویس زیر را به ${targetLanguageName} با لحن شاعرانه و ادبی انجام بده. فقط متن ترجمه شده را برگردان: "${text}"`;
                 break;
             case 'dramatic':
-                prompt = `ترجمه زیرنویس زیر را به فارسی با لحن دراماتیک و احساسی انجام بده. فقط متن ترجمه شده را برگردان: "${text}"`;
+                prompt = `ترجمه زیرنویس زیر را به ${targetLanguageName} با لحن دراماتیک و احساسی انجام بده. فقط متن ترجمه شده را برگردان: "${text}"`;
                 break;
             case 'uncensored':
-                prompt = `ترجمه زیرنویس زیر را به فارسی با لحن کاملاً محاوره‌ای و گفتاری انجام بده. تمام کلمات و عبارات را دقیقاً همانطور که هستند و بدون هیچ سانسوری ترجمه کن، حتی اگر رکیک یا توهین‌آمیز باشند. از زبان محلی و روزمره استفاده کن و ترجمه را شبیه به گفت‌وگوی طبیعی و محلی انجام بده. فقط متن ترجمه شده را برگردان: "${text}"`;
+                prompt = `ترجمه زیرنویس زیر را به ${targetLanguageName} با لحن کاملاً محاوره‌ای و گفتاری انجام بده. تمام کلمات و عبارات را دقیقاً همانطور که هستند و بدون هیچ سانسوری ترجمه کن، حتی اگر رکیک یا توهین‌آمیز باشند. از زبان محلی و روزمره استفاده کن و ترجمه را شبیه به گفت‌وگوی طبیعی و محلی انجام بده. فقط متن ترجمه شده را برگردان: "${text}"`;
                 break;
             default:
-                prompt = `ترجمه زیرنویس زیر را به فارسی انجام بده. فقط متن ترجمه شده را برگردان: "${text}"`;
+                prompt = `ترجمه زیرنویس زیر را به ${targetLanguageName} انجام بده. فقط متن ترجمه شده را برگردان: "${text}"`;
         }
         
         try {
@@ -539,10 +597,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: JSON.stringify({
                     model: selectedModel,
                     messages: [
-                        { role: 'system', content: 'شما یک مترجم حرفه‌ای هستید که زیرنویس‌ها را به فارسی ترجمه می‌کند.' },
+                        { role: 'system', content: `شما یک مترجم حرفه‌ای هستید که زیرنویس‌ها را به ${targetLanguageName} ترجمه می‌کند.` },
                         { role: 'user', content: prompt }
                     ],
-                    temperature: 0.3,
+                    temperature: parseFloat(creativityLevelSelect.value),
                     max_tokens: 256
                 })
             });
@@ -556,6 +614,28 @@ document.addEventListener('DOMContentLoaded', function() {
         } catch (error) {
             console.error('API error:', error);
             throw error;
+        }
+    }
+
+    // Helper function to get language name in Persian
+    function getLanguageName(code) {
+        switch (code) {
+            case 'fa': return 'فارسی';
+            case 'en': return 'انگلیسی';
+            case 'ar': return 'عربی';
+            case 'fr': return 'فرانسوی';
+            case 'de': return 'آلمانی';
+            case 'es': return 'اسپانیایی';
+            case 'zh': return 'چینی';
+            case 'ru': return 'روسی';
+            case 'ja': return 'ژاپنی';
+            case 'ko': return 'کره‌ای';
+            case 'it': return 'ایتالیایی';
+            case 'pt': return 'پرتغالی';
+            case 'tr': return 'ترکی';
+            case 'hi': return 'هندی';
+            case 'bn': return 'بنگالی';
+            default: return 'فارسی'; // Default to Persian
         }
     }
 
@@ -726,24 +806,35 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        // Create SRT content
-        let srtData = '';
-        translatedContent.forEach(subtitle => {
-            srtData += subtitle.index + '\n';
-            srtData += subtitle.timeCode + '\n';
-            srtData += subtitle.text + '\n\n';
-        });
-        
-        // Create and download the file
-        const blob = new Blob([srtData], { type: 'text/srt;charset=utf-8' });
+        const outputFormat = outputFormatSelect.value;
         const tone = toneSelect.options[toneSelect.selectedIndex].text;
+        const targetLanguageCode = targetLanguageSelect.value;
+        
+        let fileContent = '';
+        let fileExtension = '';
+        let mimeType = '';
+
+        if (outputFormat === 'srt') {
+            fileContent = formatSRT(translatedContent);
+            fileExtension = 'srt';
+            mimeType = 'text/srt;charset=utf-8';
+        } else if (outputFormat === 'vtt') {
+            fileContent = formatVTT(translatedContent);
+            fileExtension = 'vtt';
+            mimeType = 'text/vtt;charset=utf-8';
+        } else {
+            showNotification('فرمت خروجی نامعتبر است.');
+            return;
+        }
+        
+        const blob = new Blob([fileContent], { type: mimeType });
         
         // اضافه کردن پسوند ناقص اگر ترجمه کامل نشده باشد
         let fileName = '';
         if (isTranslating && pauseTranslation) {
-            fileName = `${originalFileName}_fa_${tone}_ناقص.srt`;
+            fileName = `${originalFileName}_${targetLanguageCode}_${tone}_ناقص.${fileExtension}`;
         } else {
-            fileName = `${originalFileName}_fa_${tone}.srt`;
+            fileName = `${originalFileName}_${targetLanguageCode}_${tone}.${fileExtension}`;
         }
         
         // Create download link
@@ -757,6 +848,30 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.removeChild(downloadLink);
         
         showNotification(`فایل زیرنویس با نام ${fileName} ذخیره شد`);
+    }
+
+    // Helper function to format subtitles as SRT
+    function formatSRT(subtitles) {
+        let srtData = '';
+        subtitles.forEach(subtitle => {
+            srtData += subtitle.index + '\n';
+            srtData += subtitle.timeCode + '\n';
+            srtData += subtitle.text + '\n\n';
+        });
+        return srtData;
+    }
+
+    // Helper function to format subtitles as VTT
+    function formatVTT(subtitles) {
+        let vttData = 'WEBVTT\n\n';
+        subtitles.forEach(subtitle => {
+            // Convert SRT timecode (HH:MM:SS,mmm) to VTT timecode (HH:MM:SS.mmm)
+            const vttTimeCode = subtitle.timeCode.replace(/,/g, '.');
+            vttData += `${subtitle.index}\n`; // VTT can have optional cue identifiers
+            vttData += `${vttTimeCode}\n`;
+            vttData += `${subtitle.text}\n\n`;
+        });
+        return vttData;
     }
     
     // Function to toggle edit mode for a subtitle

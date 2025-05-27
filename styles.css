@@ -1,20 +1,30 @@
 @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap');
 
 :root {
-    --primary-color: #007aff;
-    --secondary-color: #5ac8fa;
-    --success-color: #34c759;
-    --warning-color: #ff9500;
-    --danger-color: #ff3b30;
-    --light-bg: rgba(255, 255, 255, 0.85);
-    --dark-bg: rgba(28, 28, 30, 0.85);
-    --light-text: #000;
-    --dark-text: #fff;
-    --light-border: rgba(0, 0, 0, 0.1);
-    --dark-border: rgba(255, 255, 255, 0.1);
-    --glass-effect: blur(10px);
-    --border-radius: 12px;
-    --transition: all 0.3s ease;
+    /* Updated Color Palette */
+    --primary-color: #007bff; /* A slightly more vibrant blue */
+    --secondary-color: #6f42c1; /* A new accent color (purple) */
+    --success-color: #28a745; /* Standard success green */
+    --warning-color: #ffc107; /* Standard warning yellow */
+    --danger-color: #dc3545; /* Standard danger red */
+    --info-color: #17a2b8; /* New info color */
+
+    /* Backgrounds with less opacity for better readability */
+    --light-bg: rgba(255, 255, 255, 0.9);
+    --dark-bg: rgba(33, 37, 41, 0.9);
+
+    /* Text Colors */
+    --light-text: #212529;
+    --dark-text: #f8f9fa;
+
+    /* Border Colors */
+    --light-border: rgba(0, 0, 0, 0.15);
+    --dark-border: rgba(255, 255, 255, 0.15);
+
+    /* Other Variables */
+    --glass-effect: blur(12px); /* Slightly more blur */
+    --border-radius: 10px; /* Slightly less rounded */
+    --transition: all 0.3s ease-in-out; /* Smoother transition */
     
     /* طول‌ها و فاصله‌ها برای کلاس‌های ریسپانسیو */
     --container-padding: 30px;
@@ -979,4 +989,15 @@ input:focus, select:focus {
 
 .warning-button i {
     color: white;
-} 
+}
+
+.model-guide {
+    margin-top: 5px;
+    margin-bottom: 15px;
+    font-size: 12px;
+    color: #666;
+}
+
+.dark-mode .model-guide {
+    color: #aaa;
+}
