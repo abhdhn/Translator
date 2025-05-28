@@ -271,6 +271,25 @@ document.addEventListener('DOMContentLoaded', function() {
     const subtitleTimeDisplay = document.getElementById('subtitleTimeDisplay');
     const subtitleDurationDisplay = document.getElementById('subtitleDurationDisplay');
 
+    // TalkBot API Elements
+    const apiKeyTalkBotInput = document.getElementById('apiKeyTalkBot');
+    const connectTalkBotApiBtn = document.getElementById('connectTalkBotApi');
+    const talkBotVoiceSelect = document.getElementById('talkBotVoice');
+    const talkBotSpeedInput = document.getElementById('talkBotSpeed');
+    const testTalkBotTTSBtn = document.getElementById('testTalkBotTTS');
+    const talkBotTestResult = document.getElementById('talkBotTestResult');
+    const talkBotApiKeyStatus = document.getElementById('talkBotApiKeyStatus'); // Already defined for the function, ensure it's used here too
+
+    // Web Speech API Elements
+    const webSpeechVoiceSelect = document.getElementById('webSpeechVoice');
+    const webSpeechRateSlider = document.getElementById('webSpeechRate');
+    const webSpeechRateValue = document.getElementById('webSpeechRateValue');
+    const webSpeechPitchSlider = document.getElementById('webSpeechPitch');
+    const webSpeechPitchValue = document.getElementById('webSpeechPitchValue');
+    const testWebSpeechTTSBtn = document.getElementById('testWebSpeechTTS');
+    const webSpeechTestResult = document.getElementById('webSpeechTestResult');
+    let webSpeechVoices = [];
+
     // تابع بروزرسانی پیشرفت صوتی
     function updateAudioProgress(progress) {
         if (audioProgressBar && audioProgressPercentage) {
@@ -778,8 +797,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const subtitleItem = target.closest('.subtitle-item');
         if (!subtitleItem) return;
         
-        const subtitleIndex = parseInt(subtitleItem.dataset.index);
-
+            const subtitleIndex = parseInt(subtitleItem.dataset.index);
+            
         // Handle text edit button clicks
         if (target.classList.contains('edit-btn') || target.closest('.edit-btn')) {
             const subtitleText = subtitleItem.querySelector('.subtitle-text');
@@ -3087,7 +3106,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     header.appendChild(rightButtons);
   }
-    });
+});
 
     // Function to toggle edit mode for a subtitle's time code
     function toggleTimeEdit(subtitleItem, index) {
@@ -3647,4 +3666,290 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('.audio-dubbing-section not found in the document for collapsible feature.');
     }
 
+    // بازیابی کلید API تاک بات و بروزرسانی وضعیت
+    const savedApiKeyTalkBot = localStorage.getItem('apiKeyTalkBot');
+    if (savedApiKeyTalkBot) {
+        apiKeyTalkBotInput.value = savedApiKeyTalkBot;
+        // به صورت خودکار تست نمیکنیم، کاربر باید دکمه اتصال را بزند
+        // اما وضعیت اولیه را بر اساس وجود کلید تنظیم میکنیم
+        updateTalkBotApiKeyStatus(true); 
+        testTalkBotTTSBtn.disabled = false;
+    } else {
+        updateTalkBotApiKeyStatus(false);
+    }
+
+    // بازیابی تنظیمات صدای تاک بات
+    const savedTalkBotVoice = localStorage.getItem('talkBotVoice');
+    if (savedTalkBotVoice) {
+        talkBotVoiceSelect.value = savedTalkBotVoice;
+    }
+    const savedTalkBotSpeed = localStorage.getItem('talkBotSpeed');
+    if (savedTalkBotSpeed) {
+        talkBotSpeedInput.value = savedTalkBotSpeed;
+    }
+
+    // Event Listeners for TalkBot API Section
+    if (connectTalkBotApiBtn) {
+        connectTalkBotApiBtn.addEventListener('click', () => {
+            const apiKey = apiKeyTalkBotInput.value.trim();
+            if (apiKey) {
+                localStorage.setItem('apiKeyTalkBot', apiKey);
+                showNotification('کلید API تاک بات ذخیره شد. در حال تست اتصال...');
+                // Simple test: just try to synthesize a very short text
+                synthesizeSpeechTalkBot('سلام', talkBotVoiceSelect.value, parseFloat(talkBotSpeedInput.value))
+                    .then(downloadUrl => {
+                        if (downloadUrl) {
+                            showNotification('اتصال به API تاک بات موفق و کلید معتبر است.');
+                            updateTalkBotApiKeyStatus(true);
+                            testTalkBotTTSBtn.disabled = false;
+                        } else {
+                            // Notification & status update is handled inside synthesizeSpeechTalkBot for failure
+                            testTalkBotTTSBtn.disabled = true;
+                        }
+                    });
+            } else {
+                showNotification('لطفاً کلید API تاک بات را وارد کنید.');
+                updateTalkBotApiKeyStatus(false);
+                testTalkBotTTSBtn.disabled = true;
+            }
+        });
+    }
+
+    if (testTalkBotTTSBtn) {
+        testTalkBotTTSBtn.addEventListener('click', async () => {
+            const textToTest = 'این یک صدای آزمایشی از تاک بات است.';
+            const voice = talkBotVoiceSelect.value;
+            const speed = parseFloat(talkBotSpeedInput.value);
+            talkBotTestResult.textContent = 'در حال تولید نمونه صدا...';
+
+            const downloadUrl = await synthesizeSpeechTalkBot(textToTest, voice, speed);
+
+            if (downloadUrl) {
+                talkBotTestResult.innerHTML = `نمونه صدا تولید شد: <audio controls src="${downloadUrl}">مرورگر شما از پخش صدا پشتیبانی نمی‌کند.</audio> <a href="${downloadUrl}" target="_blank">دانلود</a>`;
+            } else {
+                talkBotTestResult.textContent = 'تولید نمونه صدا ناموفق بود.';
+            }
+        });
+    }
+
+    if (talkBotVoiceSelect) {
+        talkBotVoiceSelect.addEventListener('change', () => {
+            localStorage.setItem('talkBotVoice', talkBotVoiceSelect.value);
+            showNotification('تنظیمات صدای تاک بات ذخیره شد.');
+        });
+    }
+
+    if (talkBotSpeedInput) {
+        talkBotSpeedInput.addEventListener('change', () => {
+            localStorage.setItem('talkBotSpeed', talkBotSpeedInput.value);
+            showNotification('تنظیمات سرعت گفتار تاک بات ذخیره شد.');
+        });
+    }
+
+    // بروزرسانی وضعیت دکمه تنظیمات
+    updateSettingsButtonStatus();
+
+    // Web Speech API Functions and Event Listeners
+    function populateWebSpeechVoices() {
+        if (typeof speechSynthesis === 'undefined') {
+            showNotification('Web Speech API توسط این مرورگر پشتیبانی نمی‌شود.');
+            webSpeechVoiceSelect.innerHTML = '<option value="">پشتیبانی نمی‌شود</option>';
+            testWebSpeechTTSBtn.disabled = true;
+            webSpeechRateSlider.disabled = true;
+            webSpeechPitchSlider.disabled = true;
+            return;
+        }
+
+        webSpeechVoices = speechSynthesis.getVoices();
+        webSpeechVoiceSelect.innerHTML = ''; // Clear existing options
+
+        if (webSpeechVoices.length === 0) {
+            webSpeechVoiceSelect.innerHTML = '<option value="">صدایی یافت نشد</option>';
+            // Sometimes voices load asynchronously, try again after a short delay
+            speechSynthesis.onvoiceschanged = () => {
+                webSpeechVoices = speechSynthesis.getVoices();
+                if (webSpeechVoices.length > 0) populateWebSpeechVoices(); // Recurse to populate
+            };
+            return;
+        }
+
+        webSpeechVoices.forEach((voice, index) => {
+            const option = document.createElement('option');
+            option.value = index; // Use index as value
+            option.textContent = `${voice.name} (${voice.lang})`;
+            if (voice.default) option.selected = true;
+            webSpeechVoiceSelect.appendChild(option);
+        });
+
+        // Restore saved voice if available
+        const savedWebSpeechVoiceIndex = localStorage.getItem('webSpeechVoiceIndex');
+        if (savedWebSpeechVoiceIndex && webSpeechVoices[savedWebSpeechVoiceIndex]) {
+            webSpeechVoiceSelect.value = savedWebSpeechVoiceIndex;
+        }
+        testWebSpeechTTSBtn.disabled = false;
+    }
+
+    // Call populate voices when they are ready
+    if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
+        speechSynthesis.onvoiceschanged = populateWebSpeechVoices;
+    }
+    populateWebSpeechVoices(); // Initial call in case voices are already loaded
+
+
+    function synthesizeSpeechWebAPI(text, voiceIndex, rate, pitch) {
+        if (typeof speechSynthesis === 'undefined' || webSpeechVoices.length === 0) {
+            showNotification('امکان تولید صدا با مرورگر وجود ندارد.');
+            return Promise.reject('Speech synthesis not available or no voices.');
+        }
+
+        return new Promise((resolve, reject) => {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.voice = webSpeechVoices[voiceIndex];
+            utterance.rate = rate;
+            utterance.pitch = pitch;
+            utterance.lang = webSpeechVoices[voiceIndex] ? webSpeechVoices[voiceIndex].lang : 'fa-IR';
+
+            // Event handlers for the utterance
+            utterance.onend = () => {
+                resolve(); // Resolve the promise when speech ends
+            };
+            utterance.onerror = (event) => {
+                console.error('SpeechSynthesisUtterance.onerror', event);
+                showNotification(`خطا در تولید صدای مرورگر: ${event.error}`);
+                reject(event.error); // Reject the promise on error
+            };
+
+            speechSynthesis.cancel(); // Cancel any previous speech
+            speechSynthesis.speak(utterance);
+        });
+    }
+
+    if (testWebSpeechTTSBtn) {
+        testWebSpeechTTSBtn.addEventListener('click', async () => {
+            const textToTest = 'این یک صدای آزمایشی از مرورگر شما است.';
+            const selectedVoiceIndex = parseInt(webSpeechVoiceSelect.value);
+            const rate = parseFloat(webSpeechRateSlider.value);
+            const pitch = parseFloat(webSpeechPitchSlider.value);
+
+            if (isNaN(selectedVoiceIndex) || !webSpeechVoices[selectedVoiceIndex]) {
+                showNotification('لطفا یک صدا انتخاب کنید.');
+                return;
+            }
+
+            webSpeechTestResult.textContent = 'در حال پخش نمونه صدا...';
+            try {
+                await synthesizeSpeechWebAPI(textToTest, selectedVoiceIndex, rate, pitch);
+                webSpeechTestResult.textContent = 'پخش نمونه صدا تمام شد.';
+            } catch (error) {
+                webSpeechTestResult.textContent = 'پخش نمونه صدا ناموفق بود.';
+            }
+        });
+    }
+
+    // Save/Restore Web Speech API settings
+    if (webSpeechVoiceSelect) {
+        webSpeechVoiceSelect.addEventListener('change', () => {
+            localStorage.setItem('webSpeechVoiceIndex', webSpeechVoiceSelect.value);
+            showNotification('صدای مرورگر ذخیره شد.');
+        });
+    }
+
+    if (webSpeechRateSlider) {
+        webSpeechRateSlider.addEventListener('input', () => {
+            webSpeechRateValue.textContent = parseFloat(webSpeechRateSlider.value).toFixed(1);
+        });
+        webSpeechRateSlider.addEventListener('change', () => {
+            localStorage.setItem('webSpeechRate', webSpeechRateSlider.value);
+            showNotification('سرعت گفتار مرورگر ذخیره شد.');
+        });
+        const savedWebSpeechRate = localStorage.getItem('webSpeechRate');
+        if (savedWebSpeechRate) {
+            webSpeechRateSlider.value = savedWebSpeechRate;
+            webSpeechRateValue.textContent = parseFloat(savedWebSpeechRate).toFixed(1);
+        }
+    }
+
+    if (webSpeechPitchSlider) {
+        webSpeechPitchSlider.addEventListener('input', () => {
+            webSpeechPitchValue.textContent = parseFloat(webSpeechPitchSlider.value).toFixed(1);
+        });
+        webSpeechPitchSlider.addEventListener('change', () => {
+            localStorage.setItem('webSpeechPitch', webSpeechPitchSlider.value);
+            showNotification('زیر و بمی صدای مرورگر ذخیره شد.');
+        });
+        const savedWebSpeechPitch = localStorage.getItem('webSpeechPitch');
+        if (savedWebSpeechPitch) {
+            webSpeechPitchSlider.value = savedWebSpeechPitch;
+            webSpeechPitchValue.textContent = parseFloat(savedWebSpeechPitch).toFixed(1);
+        }
+    }
+
 }); // End of DOMContentLoaded
+
+// Function to synthesize speech using TalkBot API
+async function synthesizeSpeechTalkBot(text, voiceName = 'male', speed = 1.0) {
+    const apiKey = localStorage.getItem('apiKeyTalkBot') || 'sk-af3e5f261ca177adb03b15fed6446fbf'; // Get API key, fallback to the one you provided
+    const apiUrl = 'https://api.talkbot.ir/v1/tts/create';
+
+    if (!apiKey || apiKey === 'YOUR_TALKBOT_API_KEY_HERE') { // Added a placeholder check
+        showNotification('کلید API تاک بات تنظیم نشده است. لطفاً آن را در تنظیمات وارد کنید.');
+        updateTalkBotApiKeyStatus(false);
+        return null;
+    }
+    // updateTalkBotApiKeyStatus(true); // REMOVED: Assume key is valid if present for now
+
+    const payload = {
+        text: text,
+        language: 'persian',
+        voice_server: 'talkbot', // Using talkbot's own voice server
+        voice_name: voiceName,  // 'male' or 'female'
+        speed: speed,           // Speed of speech, 1.0 is normal
+        output_format: 'mp3'    // Requesting MP3 format
+    };
+
+    try {
+        showNotification('در حال تولید صدا با تاک بات...');
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'X-API-KEY': apiKey,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const responseData = await response.json();
+
+        if (response.ok && responseData.response && responseData.response.code === 200 && responseData.response.download) {
+            showNotification('فایل صوتی با موفقیت توسط تاک بات تولید شد.');
+            console.log('TalkBot TTS Success:', responseData);
+            return responseData.response.download;
+        } else {
+            const errorMessage = responseData.response ? responseData.response.message : 'خطای ناشناخته از API تاک بات';
+            showNotification(`خطا در تولید صدا با تاک بات: ${errorMessage}`);
+            console.error('TalkBot TTS Error:', responseData);
+            updateTalkBotApiKeyStatus(false, errorMessage); // Update status on API error
+            return null;
+        }
+    } catch (error) {
+        showNotification(`خطا در ارتباط با API تاک بات: ${error.message}`);
+        console.error('Error calling TalkBot API:', error);
+        updateTalkBotApiKeyStatus(false, error.message); // Update status on network error
+        return null;
+    }
+}
+
+// Function to update TalkBot API Key status (similar to OpenRouter)
+function updateTalkBotApiKeyStatus(isValid, message = '') {
+    const talkBotApiKeyStatus = document.getElementById('talkBotApiKeyStatus');
+    if (talkBotApiKeyStatus) {
+        talkBotApiKeyStatus.className = 'api-key-status'; // Reset classes
+        if (isValid) {
+            talkBotApiKeyStatus.classList.add('connected');
+            talkBotApiKeyStatus.title = 'کلید API تاک بات معتبر است';
+        } else {
+            talkBotApiKeyStatus.classList.add('disconnected');
+            talkBotApiKeyStatus.title = `کلید API تاک بات نامعتبر یا خطا: ${message}`;
+        }
+    }
+}
