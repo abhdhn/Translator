@@ -63,7 +63,7 @@
             <div class="api-help">
                 <i class="fas fa-info-circle"></i>
                 <span>برای دریافت کلید API به سایت <a href="https://openrouter.ai/" target="_blank">OpenRouter.ai</a> مراجعه کنید و پس از ثبت‌نام، از بخش API Keys کلید خود را کپی کنید.</span>
-            </div>
+                        </div>
             <div class="api-help support-help">
                 <i class="fas fa-headset"></i>
                 <span>برای خرید و اکانت تست به این آیدی تلگرام پیام دهید: <a href="https://t.me/poshtiban9819" target="_blank">poshtiban9819</a></span>
@@ -173,73 +173,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- TalkBot API Settings -->
-                    <div class="settings-section">
-                        <h3><i class="fas fa-microphone-alt"></i> تنظیمات API تبدیل متن به گفتار (TalkBot)</h3>
-                        <div class="api-container">
-                            <div class="api-input-container">
-                                <input type="password" id="apiKeyTalkBot" placeholder="کلید API تاک بات خود را وارد کنید">
-                                <span class="api-key-status" id="talkBotApiKeyStatus" title="وضعیت کلید API تاک بات"></span>
-                            </div>
-                            <button id="connectTalkBotApi" class="apple-button"><i class="fas fa-plug"></i> <span class="button-text">اتصال</span></button>
-                        </div>
-                        <div class="api-help">
-                            <i class="fas fa-info-circle"></i>
-                            <span>برای دریافت کلید API و مشاهده مستندات به <a href="https://talkbot.ir/text-to-speech-api" target="_blank">وب‌سایت تاک بات</a> مراجعه کنید. ۱۵۰۰۰ توکن رایگان برای تست اولیه موجود است.</span>
-                        </div>
-                        <div class="setting-item">
-                            <label for="talkBotVoice">انتخاب صدای تاک بات:</label>
-                            <select id="talkBotVoice">
-                                <option value="male" data-server="talkbot">مرد (پیش‌فرض تاک بات)</option>
-                                <option value="female" data-server="talkbot">زن (پیش‌فرض تاک بات)</option>
-                                <!-- گزینه‌های آژور و اوپن‌ای‌آی بعداً اضافه می‌شوند -->
-                            </select>
-                        </div>
-                        <div class="setting-item">
-                            <label for="talkBotSpeed">سرعت گفتار تاک بات:</label>
-                            <input type="number" id="talkBotSpeed" value="1.0" step="0.1" min="0.5" max="2.0">
-                        </div>
-                        <div class="api-btn-container">
-                            <button id="testTalkBotTTS" class="apple-button warning-button" disabled><i class="fas fa-volume-up"></i> <span class="button-text">تست صدای تاک بات</span></button>
-                        </div>
-                        <div id="talkBotTestResult" style="margin-top: 10px; font-size: 12px;"></div>
-                    </div>
-                    <!-- End TalkBot API Settings -->
-
-                    <!-- Web Speech API Settings -->
-                    <div class="settings-section">
-                        <h3><i class="fas fa-volume-up"></i> تنظیمات صدای مرورگر (Web Speech API)</h3>
-                        <div class="api-help">
-                            <i class="fas fa-info-circle"></i>
-                            <span>این قابلیت از موتور تبدیل متن به گفتار داخلی مرورگر شما استفاده می‌کند. کیفیت و تنوع صداها به مرورگر و سیستم عامل شما بستگی دارد.</span>
-                        </div>
-                        <div class="setting-item">
-                            <label for="webSpeechVoice">انتخاب صدا (مرورگر):</label>
-                            <select id="webSpeechVoice" class="apple-select">
-                                <option value="">در حال بارگذاری صداها...</option>
-                            </select>
-                        </div>
-                        <div class="setting-item">
-                            <label for="webSpeechRate">سرعت گفتار:</label>
-                            <div class="creativity-container">
-                                <input type="range" id="webSpeechRate" class="creativity-slider" min="0.5" max="2" step="0.1" value="1">
-                                <span class="creativity-value" id="webSpeechRateValue">1.0</span>
-                            </div>
-                        </div>
-                        <div class="setting-item">
-                            <label for="webSpeechPitch">زیر و بمی صدا (Pitch):</label>
-                            <div class="creativity-container">
-                                <input type="range" id="webSpeechPitch" class="creativity-slider" min="0" max="2" step="0.1" value="1">
-                                <span class="creativity-value" id="webSpeechPitchValue">1.0</span>
-                            </div>
-                        </div>
-                        <div class="api-btn-container">
-                            <button id="testWebSpeechTTS" class="apple-button warning-button"><i class="fas fa-play-circle"></i> <span class="button-text">تست صدای مرورگر</span></button>
-                        </div>
-                        <div id="webSpeechTestResult" style="margin-top: 10px; font-size: 12px;"></div>
-                    </div>
-                    <!-- End Web Speech API Settings -->
                 </div>
             </div>
         </div>

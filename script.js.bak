@@ -31,6 +31,52 @@ document.addEventListener('DOMContentLoaded', function() {
     const originalCounter = document.getElementById('originalCounter');
     const translatedCounter = document.getElementById('translatedCounter');
 
+    // Audio dubbing elements
+    const audioVolumeSlider = document.getElementById('audioVolumeSlider');
+    const audioVolumeValue = document.getElementById('audioVolumeValue');
+    const audioQualitySelect = document.getElementById('audioQualitySelect');
+    const audioFadeSelect = document.getElementById('audioFadeSelect');
+    const audioFormatSelect = document.getElementById('audioFormatSelect');
+    const audioOverflowSelect = document.getElementById('audioOverflowSelect');
+    const mergeAudioBtn = document.getElementById('mergeAudioBtn');
+    const downloadAudioBtn = document.getElementById('downloadAudioBtn');
+    const clearAudioBtn = document.getElementById('clearAudioBtn');
+    const audioProgressBar = document.getElementById('audioProgressBar');
+    const audioProgressPercentage = document.getElementById('audioProgressPercentage');
+    const audioStatus = document.getElementById('audioStatus');
+    
+    // Settings buttons
+    const settingsToggleBtn = document.getElementById('settingsToggleBtn');
+    const settingsModal = document.getElementById('settingsModal');
+    const settingsCloseBtn = document.getElementById('settingsCloseBtn');
+    
+    // Project Management
+    const exportSettingsBtn = document.getElementById('exportSettingsBtn');
+    const importSettingsBtn = document.getElementById('importSettingsBtn');
+    const settingsFileInput = document.getElementById('settingsFileInput');
+    const resetSettingsBtn = document.getElementById('resetSettingsBtn');
+    const clearProjectBtn = document.getElementById('clearProjectBtn');
+    const projectStatus = document.getElementById('projectStatus');
+    const projectStatusText = document.getElementById('projectStatusText');
+    
+    // Audio Editor Elements
+    const audioEditorModal = document.getElementById('audioEditorModal');
+    const closeAudioEditorBtn = document.getElementById('closeAudioEditorBtn');
+    const audioWaveform = document.getElementById('audioWaveform');
+    const audioPlayPauseBtn = document.getElementById('audioPlayPauseBtn');
+    const audioResetBtn = document.getElementById('audioResetBtn');
+    const audioApplyBtn = document.getElementById('audioApplyBtn');
+    const audioTrimStart = document.getElementById('audioTrimStart');
+    const audioTrimEnd = document.getElementById('audioTrimEnd');
+    const audioPlaybackRate = document.getElementById('audioPlaybackRate');
+    const audioTrimStartValue = document.getElementById('audioTrimStartValue');
+    const audioTrimEndValue = document.getElementById('audioTrimEndValue');
+    const audioPlaybackRateValue = document.getElementById('audioPlaybackRateValue');
+    const audioStartTime = document.getElementById('audioStartTime');
+    const audioEndTime = document.getElementById('audioEndTime');
+    const audioDuration = document.getElementById('audioDuration');
+    const subtitleTimeDisplay = document.getElementById('subtitleTimeDisplay');
+    const subtitleDurationDisplay = document.getElementById('subtitleDurationDisplay');
 
     // Variables
     let srtContent = [];
@@ -1315,12 +1361,7 @@ document.addEventListener('DOMContentLoaded', function() {
         connectionStatus.className = 'connection-status';
         
         try {
-            // فعال کردن فیلدهای مربوط به مدل
-            modelSearch.disabled = false;
-            modelSelect.disabled = false;
-            confirmModelBtn.disabled = false;
-            
-            // درخواست به OpenRouter API
+            // تنها OpenRouter API بررسی می‌شود
             const openRouterResponse = await fetch('https://openrouter.ai/api/v1/models', {
                 method: 'GET',
                 headers: {
@@ -1332,24 +1373,17 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (openRouterResponse.ok) {
                 const data = await openRouterResponse.json();
-                if (data.data && Array.isArray(data.data)) {
-                    populateModels(data.data, 'openrouter');
-                    connectionStatus.classList.add('connected');
-                    isConnected = true;
-                    updateSettingsButtonStatus();
-                    showNotification('اتصال API موفقیت‌آمیز بود');
-                    return;
-                } else {
-                    throw new Error('فرمت پاسخ API نامعتبر است');
-                }
+                populateModels(data.data, 'openrouter');
+                connectionStatus.classList.add('connected');
+                isConnected = true;
+                updateSettingsButtonStatus();
+                showNotification('اتصال API موفقیت‌آمیز بود');
+                return;
             }
             
             // اگر اتصال موفق نبود
             connectionStatus.classList.add('disconnected');
             isConnected = false;
-            modelSearch.disabled = true;
-            modelSelect.disabled = true;
-            confirmModelBtn.disabled = true;
             updateSettingsButtonStatus();
             showNotification('اتصال API ناموفق بود. لطفاً کلید API معتبر OpenRouter وارد کنید');
             
@@ -1357,11 +1391,8 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('API connection error:', error);
             connectionStatus.classList.add('disconnected');
             isConnected = false;
-            modelSearch.disabled = true;
-            modelSelect.disabled = true;
-            confirmModelBtn.disabled = true;
             updateSettingsButtonStatus();
-            showNotification('خطا در اتصال به API: ' + error.message);
+            showNotification('خطا در اتصال به API');
         }
     }
 
@@ -1371,45 +1402,30 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // فقط مدل‌های OpenRouter پشتیبانی می‌شوند
         models.forEach(model => {
-            if (model.id && (model.name || model.id)) {
-                const option = document.createElement('option');
-                option.value = model.id;
-                option.textContent = model.name || model.id;
-                option.dataset.provider = 'openrouter';
-                modelSelect.appendChild(option);
-                
-                // اضافه کردن به لیست کامل مدل‌ها
-                modelsList.push({
-                    value: model.id,
-                    text: model.name || model.id,
-                    provider: 'openrouter'
-                });
-            }
-        });
-        
-        // اگر هیچ مدلی یافت نشد
-        if (modelsList.length === 0) {
             const option = document.createElement('option');
-            option.value = '';
-            option.textContent = 'هیچ مدلی یافت نشد';
-            option.disabled = true;
+            option.value = model.id;
+            option.textContent = model.name || model.id;
+            option.dataset.provider = 'openrouter';
             modelSelect.appendChild(option);
-            showNotification('هیچ مدلی در دسترس نیست');
-            return;
-        }
+            
+            // اضافه کردن به لیست کامل مدل‌ها
+            modelsList.push({
+                value: model.id,
+                text: model.name || model.id,
+                provider: 'openrouter'
+            });
+        });
         
         // بازیابی مدل ذخیره شده قبلی
         const savedModel = localStorage.getItem('selectedModel');
         if (savedModel) {
             // بررسی آیا مدل قبلی در لیست فعلی وجود دارد
-            const modelExists = modelsList.some(model => model.value === savedModel);
-            if (modelExists) {
-                modelSelect.value = savedModel;
-                selectedModel = savedModel;
-                showNotification('مدل ذخیره شده قبلی بازیابی شد');
-            } else {
-                localStorage.removeItem('selectedModel');
-                showNotification('مدل ذخیره شده قبلی در دسترس نیست');
+            for (let i = 0; i < modelSelect.options.length; i++) {
+                if (modelSelect.options[i].value === savedModel) {
+                    modelSelect.selectedIndex = i;
+                    selectedModel = savedModel; // تنظیم مدل انتخاب شده
+                    break;
+                }
             }
         }
         
